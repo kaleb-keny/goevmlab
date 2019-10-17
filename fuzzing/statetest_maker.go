@@ -282,7 +282,6 @@ func (g *GstMaker) Fill(traceOutput io.Writer) error {
 	return nil
 }
 
-
 func basicStateTest() *GstMaker {
 	gst := NewGstMaker()
 	// Add sender
@@ -361,18 +360,13 @@ func Generate2200Test() *GstMaker {
 		common.HexToAddress("0xF3"),
 		common.HexToAddress("0xF4"),
 		common.HexToAddress("0xF5"),
-		common.HexToAddress("0xF6"),
-		common.HexToAddress("0xF7"),
-		common.HexToAddress("0xF8"),
-		common.HexToAddress("0xF9"),
-		common.HexToAddress("0xFA"),
 	}
 	//addrGen := addressRandomizer(addrs)
 	for _, addr := range addrs {
 		gst.AddAccount(addr, GenesisAccount{
-			Code:    RandCall2200(addrs),
-			Balance: new(big.Int),
-			Storage: RandStorage(15, 20),
+			Code:    RandCall2200(addrs, 0),
+			Balance: big.NewInt(int64(rand.Intn(100))),
+			Storage: RandStorage(5, 5),
 		})
 	}
 	// The transaction

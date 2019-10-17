@@ -53,7 +53,9 @@ func RandStorageOps() *program.Program {
 	}
 }
 
-func RandCall2200(addresses []common.Address) []byte {
+// RandCall2200 constructs code which contains some storage ops and potentially some
+// calls/creates. If depth is deemed 'too high', it won't do further calls/creates
+func RandCall2200(addresses []common.Address, depth int) []byte {
 	addrGen := addressRandomizer(addresses)
 
 	// 30% sstore,
@@ -61,29 +63,45 @@ func RandCall2200(addresses []common.Address) []byte {
 	// 20% call of some type
 	// 5% create, 5% create2,
 	// 5% return, 5% revert
+
+	// if we've reached depth too deep, we shouldn't continue
+	// calling/creating -- it bloats the code too much
+
+	chanceOfSstore := 30
+	chanceOfSload := 30
+	chanceOfCreate := 10 - depth*depth
+	chanceOfCall := 20 - depth*depth
+
 	p := program.NewProgram()
 	for {
 		r := rand.Intn(100)
 		switch {
-		case r < 30:
+		case r < chanceOfSstore:
 			p.Sstore(rand.Intn(5), rand.Intn(3))
-		case r < 60:
+		case r < chanceOfSstore+chanceOfSload:
 			slot := rand.Intn(5)
 			p.Push(slot)
 			p.Op(ops.SLOAD)
 			p.Op(ops.POP)
-		case r < 80:
+		case r < chanceOfSstore+chanceOfSload+chanceOfCreate:
+			ctor := RandStorageOps()
+			runtimeCode := RandCall2200(addresses, depth+1)
+			ctor.ReturnData(runtimeCode)
+			p.CreateAndCall(ctor.Bytecode(), r%2 == 0, randCallType(), 0)
+		case r < chanceOfSstore+chanceOfSload+chanceOfCreate+chanceOfCall:
 			// zero value call with no data
-			p2 := RandCall(nil, addrGen, nil, nil, nil)
+			var gas valFunc
+			if r%2 == 0 {
+				gas = func() interface{}{
+					return 0
+				}
+			}
+			p2 := RandCall(gas, addrGen, nil, nil, nil)
 			p.AddAll(p2)
 			// pop the ret value
 			p.Op(ops.POP)
-		case r < 90:
-			ctor := RandStorageOps()
-			runtimeCode := RandCall2200(addresses)
-			ctor.ReturnData(runtimeCode)
-			p.CreateAndCall(ctor.Bytecode(), r%2 == 0, randCallType())
 		default:
+			// return/revert
 			p.Push(0)
 			p.Push(0)
 			if r%2 == 0 {

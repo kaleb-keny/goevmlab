@@ -165,7 +165,7 @@ func TestCreateAndCall(t *testing.T) {
 
 	{ // Verify CREATE + CALL
 		p := NewProgram()
-		p.CreateAndCall(ctor.Bytecode(), false, ops.CALL)
+		p.CreateAndCall(ctor.Bytecode(), false, ops.CALL, 0)
 		exp := "7f60056000556060600053600060015360546002536060600353600060045360526000527f600553606060065360206007536060600853600060095360f3600a53600b600060205260f3604053604160006000f060006000600060006000855af15050"
 		if got := p.Hex(); got != exp {
 			t.Fatalf("2: got %v expected %v", got, exp)
@@ -174,7 +174,7 @@ func TestCreateAndCall(t *testing.T) {
 
 	{ // Verify CREATE + DELEGATECALL
 		p := NewProgram()
-		p.CreateAndCall(ctor.Bytecode(), false, ops.DELEGATECALL)
+		p.CreateAndCall(ctor.Bytecode(), false, ops.DELEGATECALL, 0)
 		exp := "7f60056000556060600053600060015360546002536060600353600060045360526000527f600553606060065360206007536060600853600060095360f3600a53600b600060205260f3604053604160006000f06000600060006000845af45050"
 		if got := p.Hex(); got != exp {
 			t.Fatalf("3: got %v expected %v", got, exp)
@@ -183,7 +183,7 @@ func TestCreateAndCall(t *testing.T) {
 
 	{ // Verify CREATE2 + STATICCALL
 		p := NewProgram()
-		p.CreateAndCall(ctor.Bytecode(), true, ops.STATICCALL)
+		p.CreateAndCall(ctor.Bytecode(), true, ops.STATICCALL, 0)
 		exp := "7f60056000556060600053600060015360546002536060600353600060045360526000527f600553606060065360206007536060600853600060095360f3600a53600b600060205260f36040536000604160006000f56000600060006000845afa5050"
 		if got := p.Hex(); got != exp {
 			t.Fatalf("2: got %v expected %v", got, exp)

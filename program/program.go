@@ -209,9 +209,8 @@ func (p *Program) ReturnData(data []byte) {
 // CreateAndCall calls create/create2 with the given bytecode
 // and then checks if the returnvalue is non-zero. If so, it calls into the
 // newly created contract with all available gas
-func (p *Program) CreateAndCall(code []byte, isCreate2 bool, callOp ops.OpCode) {
+func (p *Program) CreateAndCall(code []byte, isCreate2 bool, callOp ops.OpCode, value uint64) {
 	var (
-		value    = 0
 		offset   = 0
 		size     = len(code)
 		salt     = 0

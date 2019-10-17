@@ -96,7 +96,7 @@ func gasRandomizer() valFunc {
 
 var callTypes = []ops.OpCode{ops.CALL, ops.CALLCODE, ops.DELEGATECALL, ops.STATICCALL}
 
-func randCallType() ops.OpCode{
+func randCallType() ops.OpCode {
 	return callTypes[rand.Intn(len(callTypes))]
 }
 
