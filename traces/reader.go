@@ -249,13 +249,9 @@ func readJson(data []byte) (*Traces, error) {
 	// Attempt one: read directly into traceTxResult,
 	// This will succeed if the file consist of the actual
 	// 'result', but not the full RPC response
+
 	err := json.Unmarshal(data, &traceData.Result)
-	if err != nil {
-		if err != nil {
-			return nil, err
-		}
-	}
-	if traceData.Result.Logs == nil {
+	if err != nil || len(traceData.Result.Logs) == 0 {
 		// Attempt two: read into traceTxRPCResponse, in case
 		// the file is the complete RPC response from a
 		// traceTransaction invocation
@@ -346,6 +342,9 @@ func ReadFile(location string) (*Traces, error) {
 	}
 	// First attempt to read as JSON struct
 	t, err := readJson(data)
+	if err != nil {
+		panic(err)
+	}
 	if err != nil {
 		// Second attempt, read as json lines.
 		// Need to reset the input
