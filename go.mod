@@ -14,8 +14,7 @@ require (
 	github.com/golang/snappy v0.0.4
 	github.com/holiman/uint256 v1.2.0
 	github.com/rivo/tview v0.0.0-20200712113419-c65badfc3d92
-	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
-	golang.org/x/sys v0.0.0-20211214234402-4825e8c3871d // indirect
+	golang.org/x/crypto v0.1.0
 	gopkg.in/urfave/cli.v1 v1.20.0
 )
 
